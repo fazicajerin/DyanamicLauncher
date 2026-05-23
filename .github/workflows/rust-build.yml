@@ -7,10 +7,13 @@ on:
     branches: [ "main" ]
   workflow_dispatch: # lets you trigger manually from GitHub UI
 
+
 jobs:
   build-windows:
     name: Build .exe on Windows
     runs-on: windows-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # ← add this line
 
     steps:
       # 1. Check out your source code
