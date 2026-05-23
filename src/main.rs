@@ -9,13 +9,13 @@ mod watcher;
 
 use eframe::egui::{
     self, Align, CentralPanel, Color32, FontId, Frame, Key, Layout,
-    Modifiers, Pos2, Rect, RichText, Rounding, Stroke, TextEdit, Vec2,
+    Pos2, RichText, Rounding, Stroke, TextEdit, Vec2,
     ViewportBuilder, ViewportCommand,
 };
-use search::{ResultKind, SearchEngine, SearchResult};
+use search::{SearchEngine, SearchResult};
 use std::sync::{
     atomic::{AtomicBool, Ordering},
-    Arc, Mutex,
+    Arc,
 };
 use std::process::Command;
 
@@ -54,7 +54,8 @@ fn main() {
                 | EventType::KeyRelease(Key::ControlRight) => {
                     ctrl_held = false;
                 }
-                EventType::KeyPress(Key::Space) if ctrl_held => {
+                // ✅ Changed from Key::Space to Key::Alt
+                EventType::KeyPress(Key::Alt) if ctrl_held => {
                     TOGGLE_FLAG.store(true, Ordering::Relaxed);
                 }
                 _ => {}
@@ -240,7 +241,6 @@ impl eframe::App for DynamicLauncherAPP {
         }
 
         // ── draw UI ───────────────────────────────────────────────────────────
-        let style = ctx.style();
         CentralPanel::default()
             .frame(Frame::none())
             .show(ctx, |ui| {
