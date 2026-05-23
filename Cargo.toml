@@ -1,0 +1,32 @@
+[package]
+name = "dynamiclauncher"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "dynamiclauncher"
+path = "src/main.rs"
+
+[dependencies]
+eframe       = { version = "0.27", features = ["persistence"] }
+egui         = "0.27"
+walkdir      = "2"
+rusqlite     = { version = "0.31", features = ["bundled"] }
+notify       = "6"
+rdev         = "0.5"
+serde        = { version = "1", features = ["derive"] }
+serde_json   = "1"
+dirs         = "5"
+rayon        = "1"
+fuzzy-matcher = "0.3"
+
+[profile.release]
+opt-level     = 3
+lto           = true
+codegen-units = 1
+strip         = true
+
+[package.metadata.bundle]
+name            = "DynamicLauncher"
+identifier      = "com.dynamiclauncher.app"
+icon            = []
