@@ -1,0 +1,28 @@
+name: Build Rust App (Windows)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - name: Build release
+      run: cargo build --release
+
+    - name: Upload built exe
+      uses: actions/upload-artifact@v3
+      with:
+        name: rust-app
+        path: target/release/*.exe
