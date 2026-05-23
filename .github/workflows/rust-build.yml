@@ -2,27 +2,48 @@ name: Build Rust App (Windows)
 
 on:
   push:
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # lets you trigger manually from GitHub UI
 
 jobs:
-  build:
+  build-windows:
+    name: Build .exe on Windows
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      # 1. Check out your source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install Rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
+      # 2. Install the Rust toolchain (no MSVC needed — uses stable with gnu or msvc auto-selected)
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc  # windows-latest has MSVC pre-installed
 
-    - name: Build release
-      run: cargo build --release
+      # 3. Cache Cargo dependencies to speed up future runs
+      - name: Cache Cargo registry & build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
-    - name: Upload built exe
-      uses: actions/upload-artifact@v4
-      with:
-        name: rust-app
-        path: target/release/*.exe
+      # 4. Build in release mode — produces the optimized .exe
+      - name: Build release binary
+        run: cargo build --release --verbose
+
+      # 5. Upload the .exe as a downloadable artifact — uses v4 only
+      - name: Upload .exe artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: launcher-windows-x64
+          path: target/release/*.exe
+          if-no-files-found: error  # fail loudly if the build didn't produce an exe
+          retention-days: 30
