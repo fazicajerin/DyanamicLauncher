@@ -91,7 +91,7 @@ fn main() {
     eframe::run_native(
         "Seno",
         options,
-        Box::new(|cc| Ok(Box::new(DynamicLauncherAPP::new(cc, engine)))),
+        Box::new(|cc| Box::new(DynamicLauncherAPP::new(cc, engine))),
     )
     .expect("Failed to start Seno");
 }
